@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MAJID • Migration Roster</title>
+<style>
+:root{--bg:#080a0f;--p:#11151d;--p2:#171b24;--line:#292f3a;--text:#f5f7fb;--muted:#929aaa;--good:#6ee7a8;--bad:#ff7777;--warn:#ffd166}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% -10%,#202633,transparent 35%),var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{max-width:760px;margin:auto;padding:22px 16px 70px}.header{text-align:center;padding:18px 0 24px}.brand{font-size:42px;font-weight:900;letter-spacing:.12em;margin:0}.sub{color:var(--muted);font-size:12px;margin-top:6px;text-transform:uppercase;letter-spacing:.1em}.pill{display:inline-block;margin-top:13px;padding:7px 12px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:12px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat,.section{background:var(--p);border:1px solid var(--line);border-radius:18px}.stat{padding:15px}.lab{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em}.val{font-size:21px;font-weight:800;margin-top:6px;word-break:break-word}.section{margin-top:14px;overflow:hidden}.head{display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid var(--line)}.title{font-weight:800}.note{font-size:11px;color:var(--muted)}.player{border-bottom:1px solid var(--line)}.summary{width:100%;padding:15px 16px;background:none;border:0;color:var(--text);display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;text-align:left}.game{font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.score{font-weight:800;font-size:13px}.btn{border:1px solid var(--line);background:var(--p2);color:var(--text);border-radius:10px;padding:9px 10px;font-weight:700}.details{display:none;background:#0d1016;padding:0 16px 16px}.open .details{display:block}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding-top:13px}.detail{border:1px solid var(--line);border-radius:11px;padding:10px;background:#11151d}.detail b{display:block;color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.06em}.detail span{display:block;margin-top:4px;font-size:13px;font-weight:700;word-break:break-word}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.primary,.secondary{width:100%;padding:13px;border-radius:13px;font-weight:800;border:1px solid var(--line)}.primary{background:#f1f4f8;color:#090b10}.secondary{background:var(--p2);color:var(--text)}.form{padding:16px}.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field label{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;margin-bottom:5px}.field input{width:100%;padding:12px;border-radius:11px;border:1px solid var(--line);background:#0d1016;color:var(--text)}.field{margin-bottom:2px}.form .submit{margin-top:13px}.notice{display:none;margin:12px 16px 0;padding:11px;border-radius:11px;font-size:12px}.show{display:block}.good{color:var(--good);background:#10251a;border:1px solid #28573c}.bad{color:var(--bad);background:#281215;border:1px solid #633039}.empty,.loading{text-align:center;padding:30px 16px;color:var(--muted);font-size:13px}.adminrow{padding:15px 16px;border-bottom:1px solid var(--line)}.adminfields{display:grid;grid-template-columns:1fr 1fr;gap:8px}.adminfields input{width:100%;padding:9px;border:1px solid var(--line);background:#0d1016;color:var(--text);border-radius:9px}.adminbuttons{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:9px}.adminbuttons button{padding:10px;border-radius:9px;border:1px solid var(--line);font-weight:800}.approve{background:#dff9eb}.reject{background:#35171b;color:#ffd5d5}.footer{text-align:center;color:#5f6674;font-size:10px;margin-top:22px}@media(max-width:520px){.summary{grid-template-columns:1fr auto}.score{grid-column:1}.details-btn{grid-column:2;grid-row:1}.grid,.fields,.adminfields{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="header"><h1 class="brand">MAJID</h1><div class="sub">Migration Roster</div><div id="server" class="pill">Current Server • —</div></header>
+
+<section class="stats">
+<div class="stat"><div class="lab">Verified Players</div><div id="players" class="val">—</div></div>
+<div class="stat"><div class="lab">Total Combat Power</div><div id="power" class="val">—</div></div>
+<div class="stat"><div class="lab">Total Kills</div><div id="kills" class="val">—</div></div>
+<div class="stat"><div class="lab">Current Server</div><div id="server2" class="val">—</div></div>
+</section>
+
+<section class="section"><div class="head"><div class="title">Verified Players</div><div id="updated" class="note">Loading…</div></div><div id="roster"><div class="loading">Loading roster…</div></div></section>
+
+<div class="actions"><button class="primary" onclick="document.getElementById('submitSection').scrollIntoView({behavior:'smooth'})">Submit My Details</button><button class="secondary" onclick="loadRoster()">Refresh Roster</button></div>
+
+<section id="submitSection" class="section"><div class="head"><div class="title">Submit Your Details</div><div class="note">Pending review</div></div><div id="submitNotice" class="notice"></div><form id="form" class="form"><div class="fields">
+<div class="field"><label>Game ID</label><input name="game_id" required></div><div class="field"><label>UID / User ID</label><input name="uid" required></div>
+<div class="field"><label>Combat Power</label><input name="combat_power" inputmode="numeric" required></div><div class="field"><label>Main March Power</label><input name="main_march_power" inputmode="numeric" required></div>
+<div class="field"><label>Second March Power</label><input name="second_march_power" inputmode="numeric" required></div><div class="field"><label>Faction</label><input name="faction" required></div>
+<div class="field"><label>Number of Kills</label><input name="kills" inputmode="numeric" required></div><div class="field"><label>Tower Level</label><input name="tower_level" inputmode="numeric" required></div>
+<div class="field"><label>Migration Score</label><input name="migration_score" inputmode="numeric" required></div>
+</div><button id="submit" class="primary submit" type="submit">Send for Approval</button><p class="note">Your details appear publicly only after approval.</p></form></section>
+
+<section id="adminSection" class="section" style="display:none"><div class="head"><div class="title">MAJID Admin</div><div class="note">Private</div></div>
+<div id="login"><div class="form"><div class="field"><label>Admin Password</label><input id="pw" type="password"></div><button class="primary" onclick="login()">Open Dashboard</button><div id="loginNotice" class="notice"></div></div></div>
+<div id="admin" style="display:none"><div id="adminNotice" class="notice"></div><div class="head"><div class="note">Pending submissions</div><button class="btn" onclick="pending()">Refresh</button></div><div id="pending"><div class="loading">Loading…</div></div></div>
+</section>
+<div class="footer">MAJID • Dark War Survival migration roster</div>
+</div>
+
+<script>
+const API="https://script.google.com/macros/s/AKfycbwgtiq7vTtvKWckp3hVZpTAzE9wQRVXO0hbv4D8JRiAt2wzo6TmI4ZVkHDPyaJuvlA/exec";
+const $=id=>document.getElementById(id);
+const esc=x=>String(x??"—").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+const num=x=>{let n=Number(String(x??"").replace(/,/g,""));return Number.isFinite(n)?n:0};
+const fmt=x=>x===""||x==null?"—":Number.isFinite(Number(String(x).replace(/,/g,"")))?Number(String(x).replace(/,/g,"")).toLocaleString():String(x);
+
+async function post(x){let r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(x)});return r.json()}
+
+async function loadRoster(){
+$("roster").innerHTML='<div class="loading">Loading roster…</div>';
+try{
+let r=await fetch(API+"?action=roster&t="+Date.now(),{cache:"no-store"}),d=await r.json();
+if(!d.ok)throw Error(d.error);
+let a=d.players||[],s=d.current_server||"—";
+$("players").textContent=a.length.toLocaleString();$("power").textContent=a.reduce((z,p)=>z+num(p.combat_power),0).toLocaleString();$("kills").textContent=a.reduce((z,p)=>z+num(p.kills),0).toLocaleString();$("server").textContent="Current Server • "+s;$("server2").textContent=s;$("updated").textContent="Updated "+new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+$("roster").innerHTML=a.length?a.map((p,i)=>card(p,i)).join(""):'<div class="empty">No approved players yet.</div>';
+}catch(e){$("roster").innerHTML='<div class="empty">Could not load the roster.<br><br><button class="secondary" onclick="loadRoster()">Try Again</button></div>'}
+}
+function detail(l,v){return '<div class="detail"><b>'+esc(l)+'</b><span>'+esc(v)+'</span></div>'}
+function card(p,i){return '<div class="player" id="p'+i+'"><button class="summary" onclick="toggle('+i+')"><span class="game">'+esc(p.game_id)+'</span><span class="score">Score '+fmt(p.migration_score)+'</span><span class="btn details-btn">View Details</span></button><div class="details"><div class="grid">'+detail("Game ID",p.game_id)+detail("UID / User ID",p.uid)+detail("Combat Power",fmt(p.combat_power))+detail("Main March Power",fmt(p.main_march_power))+detail("Second March Power",fmt(p.second_march_power))+detail("Faction",p.faction)+detail("Number of Kills",fmt(p.kills))+detail("Tower Level",p.tower_level)+detail("Migration Score",fmt(p.migration_score))+'</div></div></div>'}
+function toggle(i){let e=$("p"+i);e.classList.toggle("open");e.querySelector(".details-btn").textContent=e.classList.contains("open")?"Hide Details":"View Details"}
+
+$("form").onsubmit=async e=>{
+e.preventDefault();let b=$("submit");b.disabled=true;b.textContent="Submitting…";let n=$("submitNotice");n.className="notice";
+let f=new FormData(e.target),p={action:"submit"};f.forEach((v,k)=>p[k]=String(v).trim());
+try{let r=await post(p);if(!r.ok)throw Error(r.error);n.className="notice show good";n.textContent="✓ Submitted successfully. Your details are pending approval.";e.target.reset()}catch(x){n.className="notice show bad";n.textContent="Could not submit: "+x.message}finally{b.disabled=false;b.textContent="Send for Approval"}
+};
+
+function maybeAdmin(){if(new URLSearchParams(location.search).get("admin")==="1"){$("adminSection").style.display="block";$("adminSection").scrollIntoView({behavior:"smooth"})}}
+
+async function login(){let n=$("loginNotice");n.className="notice";try{let r=await post({action:"adminLogin",password:$("pw").value});if(!r.ok)throw Error(r.error);sessionStorage.setItem("majid_admin_token",r.token);$("login").style.display="none";$("admin").style.display="block";pending()}catch(e){n.className="notice show bad";n.textContent=e.message}}
+
+function ai(label,name,value){return '<div><label>'+esc(label)+'</label><input data-f="'+name+'" value="'+esc(value??"")+'"></div>'}
+function ac(p){return '<div class="adminrow" id="a'+p.row_number+'"><div style="display:flex;justify-content:space-between;margin-bottom:9px"><b>'+esc(p.game_id)+'</b><span style="color:var(--warn);font-size:11px;font-weight:800">PENDING</span></div><div class="adminfields">'+ai("Game ID","game_id",p.game_id)+ai("UID","uid",p.uid)+ai("Combat Power","combat_power",p.combat_power)+ai("Main March Power","main_march_power",p.main_march_power)+ai("Second March Power","second_march_power",p.second_march_power)+ai("Faction","faction",p.faction)+ai("Kills","kills",p.kills)+ai("Tower Level","tower_level",p.tower_level)+ai("Migration Score","migration_score",p.migration_score)+'</div><div class="adminbuttons"><button class="approve" onclick="saveA('+p.row_number+','approved')">Approve</button><button class="reject" onclick="saveA('+p.row_number+','rejected')">Reject</button><button class="btn" onclick="saveA('+p.row_number+','pending')">Save Edit</button></div></div>'}
+
+async function pending(){let t=sessionStorage.getItem("majid_admin_token");$("pending").innerHTML='<div class="loading">Loading…</div>';try{let r=await post({action:"adminList",token:t});if(!r.ok)throw Error(r.error);$("pending").innerHTML=(r.players||[]).length?r.players.map(ac).join(""):'<div class="empty">No pending submissions. ✨</div>'}catch(e){sessionStorage.removeItem("majid_admin_token");$("login").style.display="block";$("admin").style.display="none";$("loginNotice").className="notice show bad";$("loginNotice").textContent=e.message}}
+
+async function saveA(row,status){let t=sessionStorage.getItem("majid_admin_token"),el=$("a"+row),p={action:"adminSave",token:t,row_number:row,status};el.querySelectorAll("[data-f]").forEach(x=>p[x.dataset.f]=x.value.trim());try{let r=await post(p);if(!r.ok)throw Error(r.error);$("adminNotice").className="notice show good";$("adminNotice").textContent=status==="approved"?"✓ Player approved.":status==="rejected"?"✓ Player rejected.":"✓ Player updated.";await pending();await loadRoster()}catch(e){$("adminNotice").className="notice show bad";$("adminNotice").textContent=e.message}}
+
+maybeAdmin();loadRoster();
+</script>
+</body>
+</html>
