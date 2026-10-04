@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Majid Group Admin</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f5f6fa;
+      color: #222;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px 16px 50px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 30px;
+    }
+
+    .header p {
+      margin: 6px 0 0;
+      color: #777;
+    }
+
+    .card {
+      background: white;
+      border-radius: 18px;
+      padding: 22px;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+    }
+
+    .login-box {
+      max-width: 420px;
+      margin: 70px auto;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin: 14px 0 6px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      font-size: 16px;
+      background: white;
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin: 6px 5px 0 0;
+    }
+
+    .primary {
+      background: #111;
+      color: white;
+    }
+
+    .approve {
+      background: #16834b;
+      color: white;
+    }
+
+    .reject {
+      background: #c93434;
+      color: white;
+    }
+
+    .save {
+      background: #3157c9;
+      color: white;
+    }
+
+    .logout {
+      background: #eee;
+      color: #333;
+    }
+
+    .message {
+      padding: 12px;
+      border-radius: 10px;
+      margin: 15px 0;
+      display: none;
+    }
+
+    .error {
+      background: #ffe5e5;
+      color: #a00000;
+    }
+
+    .success {
+      background: #e3f7eb;
+      color: #176b3c;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .player-card {
+      border: 1px solid #e5e5e5;
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 16px;
+      background: #fff;
+    }
+
+    .player-title {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px 16px;
+    }
+
+    .private-score {
+      background: #fff7d6;
+      border: 1px solid #f0d96b;
+      padding: 12px;
+      border-radius: 10px;
+      margin-top: 12px;
+    }
+
+    .private-score strong {
+      color: #8a6800;
+    }
+
+    .actions {
+      margin-top: 15px;
+      padding-top: 12px;
+      border-top: 1px solid #eee;
+    }
+
+    .empty {
+      text-align: center;
+      color: #777;
+      padding: 30px 10px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 30px;
+      color: #777;
+    }
+
+    @media (max-width: 700px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .container {
+        padding: 18px 12px 40px;
+      }
+
+      .card {
+        padding: 17px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- LOGIN -->
+  <div id="loginScreen" class="container">
+    <div class="card login-box">
+
+      <div class="header">
+        <h1>Majid Group</h1>
+        <p>Private Admin Panel 🔐</p>
+      </div>
+
+      <label for="password">Admin Password</label>
+
+      <input
+        type="password"
+        id="password"
+        placeholder="Enter admin password"
+        autocomplete="current-password"
+      >
+
+      <button class="primary" onclick="login()" style="width:100%; margin-top:18px;">
+        Login
+      </button>
+
+      <div id="loginMessage" class="message error"></div>
+
+    </div>
+  </div>
+
+
+  <!-- ADMIN PANEL -->
+  <div id="adminScreen" class="container" style="display:none;">
+
+    <div class="topbar">
+
+      <div>
+        <h1 style="margin:0;">Majid Group Admin</h1>
+        <p style="margin:5px 0;color:#777;">
+          Private player application management
+        </p>
+      </div>
+
+      <div>
+        <button class="primary" onclick="loadPlayers()">
+          Refresh
+        </button>
+
+        <button class="logout" onclick="logout()">
+          Logout
+        </button>
+      </div>
+
+    </div>
+
+    <div id="adminMessage" class="message"></div>
+
+    <div class="card">
+
+      <h2 style="margin-top:0;">
+        Pending Applications
+      </h2>
+
+      <div id="playerList">
+        <div class="loading">
+          Loading applications...
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+
+<script>
+
+const API_URL =
+  "https://script.google.com/macros/s/AKfycbwgtiq7vTtvKWckp3hVZpTAzE9wQRVXO0hbv4D8JRiAt2wzo6TmI4ZVkHDPyaJuvlA/exec";
+
+let adminToken = null;
+
+
+/* -----------------------------
+   API REQUEST
+----------------------------- */
+
+async function api(data) {
+
+  const response = await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify(data)
+  });
+
+  return await response.json();
+}
+
+
+/* -----------------------------
+   LOGIN
+----------------------------- */
+
+async function login() {
+
+  const password =
+    document.getElementById("password").value.trim();
+
+  if (!password) {
+    showLoginMessage("Please enter the admin password.");
+    return;
+  }
+
+  try {
+
+    const result = await api({
+      action: "adminLogin",
+      password: password
+    });
+
+    if (!result.ok) {
+      showLoginMessage(
+        result.error || "Incorrect password."
+      );
+      return;
+    }
+
+    adminToken = result.token;
+
+    sessionStorage.setItem(
+      "majidAdminToken",
+      adminToken
+    );
+
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("adminScreen").style.display = "block";
+
+    loadPlayers();
+
+  } catch (error) {
+
+    showLoginMessage(
+      "Unable to connect to the server."
+    );
+
+  }
+}
+
+
+/* -----------------------------
+   LOAD PLAYERS
+----------------------------- */
+
+async function loadPlayers() {
+
+  const list =
+    document.getElementById("playerList");
+
+  list.innerHTML =
+    '<div class="loading">Loading applications...</div>';
+
+  try {
+
+    const result = await api({
+      action: "adminList",
+      token: adminToken
+    });
+
+    if (!result.ok) {
+
+      if (
+        result.error &&
+        result.error.toLowerCase().includes("unauthorized")
+      ) {
+        logout();
+        return;
+      }
+
+      list.innerHTML =
+        '<div class="empty">Unable to load applications.</div>';
+
+      showAdminMessage(
+        result.error || "Unable to load players.",
+        true
+      );
+
+      return;
+    }
+
+    const players = result.players || [];
+
+    if (players.length === 0) {
+
+      list.innerHTML =
+        '<div class="empty">🎉 No pending applications right now.</div>';
+
+      return;
+    }
+
+    list.innerHTML =
+      players.map(createPlayerCard).join("");
+
+  } catch (error) {
+
+    list.innerHTML =
+      '<div class="empty">Unable to connect to the server.</div>';
+
+  }
+}
+
+
+/* -----------------------------
+   PLAYER CARD
+----------------------------- */
+
+function createPlayerCard(player) {
+
+  return `
+    <div class="player-card" id="player-${player.row_number}">
+
+      <div class="player-title">
+        ${escapeHtml(player.game_id || "Unnamed Player")}
+      </div>
+
+      <div class="grid">
+
+        <div>
+          <label>Game ID</label>
+          <input
+            id="game_id-${player.row_number}"
+            value="${escapeAttr(player.game_id)}"
+          >
+        </div>
+
+        <div>
+          <label>UID</label>
+          <input
+            id="uid-${player.row_number}"
+            value="${escapeAttr(player.uid)}"
+          >
+        </div>
+
+        <div>
+          <label>Combat Power</label>
+          <input
+            id="combat_power-${player.row_number}"
+            value="${escapeAttr(player.combat_power)}"
+          >
+        </div>
+
+        <div>
+          <label>Main March Power</label>
+          <input
+            id="main_march_power-${player.row_number}"
+            value="${escapeAttr(player.main_march_power)}"
+          >
+        </div>
+
+        <div>
+          <label>Faction</label>
+          <input
+            id="faction-${player.row_number}"
+            value="${escapeAttr(player.faction)}"
+          >
+        </div>
+
+        <div>
+          <label>Kills</label>
+          <input
+            id="kills-${player.row_number}"
+            value="${escapeAttr(player.kills)}"
+          >
+        </div>
+
+        <div>
+          <label>Tower Level</label>
+          <input
+            id="tower_level-${player.row_number}"
+            value="${escapeAttr(player.tower_level)}"
+          >
+        </div>
+
+      </div>
+
+      <div class="private-score">
+
+        <strong>🔒 Private Migration Score</strong>
+
+        <input
+          id="migration_score-${player.row_number}"
+          value="${escapeAttr(player.migration_score)}"
+          inputmode="decimal"
+        >
+
+        <small>
+          This information is visible only inside the Admin Panel.
+        </small>
+
+      </div>
+
+      <div class="actions">
+
+        <button
+          class="approve"
+          onclick="savePlayer(${player.row_number}, 'approved')"
+        >
+          ✓ Approve
+        </button>
+
+        <button
+          class="reject"
+          onclick="savePlayer(${player.row_number}, 'rejected')"
+        >
+          ✕ Reject
+        </button>
+
+        <button
+          class="save"
+          onclick="savePlayer(${player.row_number}, 'pending')"
+        >
+          💾 Save Changes
+        </button>
+
+      </div>
+
+    </div>
+  `;
+}
+
+
+/* -----------------------------
+   SAVE / APPROVE / REJECT
+----------------------------- */
+
+async function savePlayer(rowNumber, status) {
+
+  const player = {
+
+    action: "adminSave",
+
+    token: adminToken,
+
+    row_number: rowNumber,
+
+    game_id:
+      document.getElementById(
+        `game_id-${rowNumber}`
+      ).value.trim(),
+
+    uid:
+      document.getElementById(
+        `uid-${rowNumber}`
+      ).value.trim(),
+
+    combat_power:
+      document.getElementById(
+        `combat_power-${rowNumber}`
+      ).value.trim(),
+
+    main_march_power:
+      document.getElementById(
+        `main_march_power-${rowNumber}`
+      ).value.trim(),
+
+    faction:
+      document.getElementById(
+        `faction-${rowNumber}`
+      ).value.trim(),
+
+    kills:
+      document.getElementById(
+        `kills-${rowNumber}`
+      ).value.trim(),
+
+    tower_level:
+      document.getElementById(
+        `tower_level-${rowNumber}`
+      ).value.trim(),
+
+    migration_score:
+      document.getElementById(
+        `migration_score-${rowNumber}`
+      ).value.trim(),
+
+    status: status
+  };
+
+
+  try {
+
+    const result = await api(player);
+
+    if (!result.ok) {
+
+      showAdminMessage(
+        result.error || "Unable to save player.",
+        true
+      );
+
+      return;
+    }
+
+    showAdminMessage(
+      result.message || "Player updated successfully.",
+      false
+    );
+
+    loadPlayers();
+
+  } catch (error) {
+
+    showAdminMessage(
+      "Unable to connect to the server.",
+      true
+    );
+
+  }
+}
+
+
+/* -----------------------------
+   LOGOUT
+----------------------------- */
+
+function logout() {
+
+  adminToken = null;
+
+  sessionStorage.removeItem(
+    "majidAdminToken"
+  );
+
+  document.getElementById("adminScreen").style.display = "none";
+
+  document.getElementById("loginScreen").style.display = "block";
+
+  document.getElementById("password").value = "";
+
+}
+
+
+/* -----------------------------
+   SESSION RESTORE
+----------------------------- */
+
+window.addEventListener("load", () => {
+
+  const savedToken =
+    sessionStorage.getItem(
+      "majidAdminToken"
+    );
+
+  if (savedToken) {
+
+    adminToken = savedToken;
+
+    document.getElementById("loginScreen").style.display = "none";
+
+    document.getElementById("adminScreen").style.display = "block";
+
+    loadPlayers();
+
+  }
+
+});
+
+
+/* -----------------------------
+   MESSAGES
+----------------------------- */
+
+function showLoginMessage(message) {
+
+  const box =
+    document.getElementById("loginMessage");
+
+  box.textContent = message;
+
+  box.style.display = "block";
+}
+
+
+function showAdminMessage(message, isError) {
+
+  const box =
+    document.getElementById("adminMessage");
+
+  box.textContent = message;
+
+  box.className =
+    "message " + (isError ? "error" : "success");
+
+  box.style.display = "block";
+
+  setTimeout(() => {
+    box.style.display = "none";
+  }, 4000);
+
+}
+
+
+/* -----------------------------
+   SECURITY HELPERS
+----------------------------- */
+
+function escapeHtml(value) {
+
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
+function escapeAttr(value) {
+
+  return escapeHtml(value);
+
+}
+
+</script>
+
+</body>
+</html>
