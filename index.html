@@ -304,17 +304,17 @@ button:disabled {
       </div>
 
 
-      <label>Tower Level</label>
-      <input
-        name="tower_level"
-        inputmode="numeric"
-        placeholder="e.g. 30"
-        required
-      >
+     <label>Industrial Level</label>
+<input
+  name="industrial_level"
+  inputmode="numeric"
+  placeholder="e.g. 10"
+  required
+>
 
-      <div class="hint">
-        Numbers only.
-      </div>
+<div class="hint">
+  Enter a number from 1 to 10.
+</div>
 
 
       <label>Migration Score</label>
@@ -512,17 +512,17 @@ document
     }
 
 
-    /* Tower Level */
-    if (
-      !/^[0-9]+$/.test(
-        data.tower_level
-      )
-    ) {
+    /* Industrial Level */
+if (
+  !/^(10|[1-9])$/.test(
+    data.industrial_level
+  )
+) {
+  status.textContent =
+    "Industrial Level: enter a number from 1 to 10.";
 
-      status.textContent =
-        "Tower Level: numbers only.";
-
-      return;
+  return;
+}
     }
 
 
