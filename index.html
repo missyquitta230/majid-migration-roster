@@ -457,10 +457,18 @@ document
       document.getElementById("formStatus");
 
 
-    const data =
-      Object.fromEntries(
-        new FormData(form).entries()
-      );
+    const data = {
+  game_id: form.elements["game_id"].value.trim(),
+  uid: form.elements["uid"].value.trim(),
+  current_server: form.elements["current_server"].value.trim(),
+  combat_power: form.elements["combat_power"].value.trim(),
+  main_march_power: form.elements["main_march_power"].value.trim(),
+  second_march_power: form.elements["second_march_power"].value.trim(),
+  faction: form.elements["faction"].value.trim(),
+  kills: form.elements["kills"].value.trim(),
+  tower_level: form.elements["tower_level"].value.trim(),
+  migration_score: form.elements["migration_score"].value.trim()
+};
 
 
     /* Combat Power */
