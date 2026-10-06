@@ -369,240 +369,59 @@ function numberValue(value) {
 
 
 /* Load public roster totals */
-async function loadStats() {
+function loadStats() {
+  const callbackName =
+    "majidRosterCallback_" + Date.now();
 
-  try {
+  const script = document.createElement("script");
 
-    const response = await fetch(
-      API_URL,
-      {
-        cache: "no-store"
-      }
-    );
-
-    const data = await response.json();
-
-    if (!data.ok) {
-      throw new Error(
-        data.error || "Unable to load roster"
-      );
-    }
-
-    const players =
-      Array.isArray(data.players)
-        ? data.players
-        : [];
-
-
-    const totalKills =
-      players.reduce(
-        (total, player) =>
-          total + numberValue(player.kills),
-        0
-      );
-
-
-    const totalPower =
-      players.reduce(
-        (total, player) =>
-          total + numberValue(player.combat_power),
-        0
-      );
-
-
-
-
-    document.getElementById("kills")
-      .textContent =
-      totalKills.toLocaleString("en-US");
-
-
-    document.getElementById("power")
-      .textContent =
-      totalPower.toLocaleString("en-US");
-
-
-    document.getElementById("loadStatus")
-      .textContent = "";
-
-
-  } catch (error) {
-
-    console.error(error);
-
-    document.getElementById("loadStatus")
-      .textContent =
-      "Roster totals unavailable";
-
-  }
-}
-
-
-/* Submit player */
-document
-.getElementById("playerForm")
-.addEventListener(
-  "submit",
-  async function(event) {
-
-    event.preventDefault();
-
-
-    const form = event.target;
-
-    const button =
-      document.getElementById("submitBtn");
-
-    const status =
-      document.getElementById("formStatus");
-
-
-    const data = {
-  game_id: form.elements["game_id"].value.trim(),
-  uid: form.elements["uid"].value.trim(),
-  current_server: form.elements["current_server"].value.trim(),
-  combat_power: form.elements["combat_power"].value.trim(),
-  main_march_power: form.elements["main_march_power"].value.trim(),
-  second_march_power: form.elements["second_march_power"].value.trim(),
-  faction: form.elements["faction"].value.trim(),
-  kills: form.elements["kills"].value.trim(),
-  tower_level: form.elements["tower_level"].value.trim(),
-  migration_score: form.elements["migration_score"].value.trim()
-};
-
-
-    /* Combat Power */
-    if (
-      !/^[0-9,]+$/.test(
-        data.combat_power
-      )
-    ) {
-
-      status.textContent =
-        "Combat Power: numbers and commas only.";
-
-      return;
-    }
-
-
-    /* Main March Power */
-    if (
-      !/^[0-9]+(\.[0-9]+)?[KMGkmg]?$/
-        .test(data.main_march_power)
-    ) {
-
-      status.textContent =
-        "Main March Power: use 3.95G, 950K, or 1.5M.";
-
-      return;
-    }
-
-
-    /* Kills */
-    if (
-      !/^[0-9,]+$/.test(
-        data.kills
-      )
-    ) {
-
-      status.textContent =
-        "Kills: numbers and commas only.";
-
-      return;
-    }
-
-
-    /* Industrial Level */
-if (
-  !/^(10|[1-9])$/.test(
-    data.industrial_level
-  )
-) {
-  status.textContent =
-    "Industrial Level: enter a number from 1 to 10.";
-
-  return;
-}
-    }
-
-
-    /* Migration Score */
-    if (
-      !/^[0-9]+(\.[0-9]+)?$/
-        .test(data.migration_score)
-    ) {
-
-      status.textContent =
-        "Migration Score: use a number such as 127.7.";
-
-      return;
-    }
-
-
-    button.disabled = true;
-
-    status.textContent =
-      "Submitting...";
-
-
-    data.action = "submit";
-
-
+  window[callbackName] = function(data) {
     try {
-
-      const response =
-        await fetch(
-          API_URL,
-          {
-            method: "POST",
-
-            headers: {
-              "Content-Type":
-                "text/plain;charset=utf-8"
-            },
-
-            body:
-              JSON.stringify(data)
-          }
-        );
-
-
-      const result =
-        await response.json();
-
-
-      if (!result.ok) {
-
+      if (!data.ok) {
         throw new Error(
-          result.error ||
-          "Submission failed."
+          data.error || "Unable to load roster"
         );
-
       }
 
+      document.getElementById("kills").textContent =
+        Number(data.totalKills || 0).toLocaleString("en-US");
 
-      status.textContent =
-        "Submitted successfully. Your details are pending review.";
+      document.getElementById("power").textContent =
+        Number(data.totalPower || 0).toLocaleString("en-US");
 
-
-      form.reset();
-
+      document.getElementById("loadStatus").textContent = "";
 
     } catch (error) {
+      console.error(error);
 
-      status.textContent =
-        error.message ||
-        "Submission failed. Please try again.";
+      document.getElementById("loadStatus").textContent =
+        "Roster totals unavailable";
 
     } finally {
-
-      button.disabled = false;
-
+      delete window[callbackName];
+      script.remove();
     }
+  };
 
-  }
-);
+  script.src =
+    API_URL +
+    "?callback=" +
+    encodeURIComponent(callbackName) +
+    "&t=" +
+    Date.now();
 
+  script.onerror = function() {
+    document.getElementById("loadStatus").textContent =
+      "Roster totals unavailable";
+
+    delete window[callbackName];
+    script.remove();
+  };
+
+  document.body.appendChild(script);
+}
+
+  
 
 /* Start */
 loadStats();
