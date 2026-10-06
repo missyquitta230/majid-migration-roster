@@ -421,7 +421,54 @@ function loadStats() {
   document.body.appendChild(script);
 }
 
-  
+  /* Submit player application */
+document.querySelector("form").addEventListener("submit", async function (event) {
+  event.preventDefault();
+
+  const form = event.target;
+  const submitBtn = document.getElementById("submitBtn");
+  const formStatus = document.getElementById("formStatus");
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Submitting...";
+
+  formStatus.textContent = "Submitting your application...";
+
+  try {
+    const data = Object.fromEntries(new FormData(form).entries());
+
+    data.action = "submit";
+
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
+      body: JSON.stringify(data)
+    });
+
+    const result = await response.json();
+
+    if (!result.ok) {
+      throw new Error(result.error || "Submission failed.");
+    }
+
+    formStatus.textContent =
+      "Application submitted successfully! Your application is now pending approval.";
+
+    form.reset();
+
+  } catch (error) {
+    console.error(error);
+
+    formStatus.textContent =
+      "Submission failed: " + error.message;
+
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Submit Details";
+  }
+});
 
 /* Start */
 loadStats();
