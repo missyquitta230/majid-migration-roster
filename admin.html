@@ -427,15 +427,23 @@ function createPlayerCard(player) {
         </div>
 
         <div>
-          <label>UID</label>
-          <input
-            id="uid-${player.row_number}"
-            value="${escapeAttr(player.uid)}"
-          >
-        </div>
+  <label>UID</label>
+  <input
+    id="uid-${player.row_number}"
+    value="${escapeAttr(player.uid)}"
+  >
+</div>
 
-        <div>
-          <label>Combat Power</label>
+<div>
+  <label>Current Server</label>
+  <input
+    id="current_server-${player.row_number}"
+    value="${escapeAttr(player.current_server)}"
+  >
+</div>
+
+<div>
+  <label>Combat Power</label>
           <input
             id="combat_power-${player.row_number}"
             value="${escapeAttr(player.combat_power)}"
@@ -443,20 +451,30 @@ function createPlayerCard(player) {
         </div>
 
         <div>
-          <label>Main March Power</label>
-          <input
-            id="main_march_power-${player.row_number}"
-            value="${escapeAttr(player.main_march_power)}"
-          >
-        </div>
+  <label>Main March Power</label>
+  <input
+    id="main_march_power-${player.row_number}"
+    value="${escapeAttr(player.main_march_power)}"
+  >
+</div>
 
-        <div>
-          <label>Faction</label>
-          <input
-            id="faction-${player.row_number}"
-            value="${escapeAttr(player.faction)}"
-          >
-        </div>
+<div>
+  <label>Second March Power</label>
+  <input
+    id="second_march_power-${player.row_number}"
+    value="${escapeAttr(player.second_march_power)}"
+  >
+</div>
+
+<div>
+  <label>Faction</label>
+  <select id="faction-${player.row_number}">
+    <option value="">Select faction</option>
+    <option value="Shooter" ${player.faction === "Shooter" ? "selected" : ""}>Shooter</option>
+    <option value="Fighter" ${player.faction === "Fighter" ? "selected" : ""}>Fighter</option>
+    <option value="Rider" ${player.faction === "Rider" ? "selected" : ""}>Rider</option>
+  </select>
+</div>
 
         <div>
           <label>Kills</label>
@@ -542,21 +560,31 @@ async function savePlayer(rowNumber, status) {
       ).value.trim(),
 
     uid:
-      document.getElementById(
-        `uid-${rowNumber}`
-      ).value.trim(),
+  document.getElementById(
+    `uid-${rowNumber}`
+  ).value.trim(),
 
-    combat_power:
+current_server:
+  document.getElementById(
+    `current_server-${rowNumber}`
+  ).value.trim(),
+
+combat_power:
       document.getElementById(
         `combat_power-${rowNumber}`
       ).value.trim(),
 
     main_march_power:
-      document.getElementById(
-        `main_march_power-${rowNumber}`
-      ).value.trim(),
+  document.getElementById(
+    `main_march_power-${rowNumber}`
+  ).value.trim(),
 
-    faction:
+second_march_power:
+  document.getElementById(
+    `second_march_power-${rowNumber}`
+  ).value.trim(),
+
+faction:
       document.getElementById(
         `faction-${rowNumber}`
       ).value.trim(),
