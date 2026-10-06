@@ -196,20 +196,12 @@ button:disabled {
   <!-- PUBLIC SUMMARY -->
   <section class="stats">
 
-    <div class="card">
-      <div class="label">Total Players</div>
-      <div class="value" id="players">—</div>
-    </div>
 
     <div class="card">
       <div class="label">Total Kills</div>
       <div class="value" id="kills">—</div>
     </div>
 
-    <div class="card">
-      <div class="label">Server</div>
-      <div class="value">230</div>
-    </div>
 
     <div class="card">
       <div class="label">Combat Power</div>
@@ -244,7 +236,14 @@ button:disabled {
         autocomplete="off"
         required
       >
-
+<label>Current Server</label>
+<input
+  name="current_server"
+  inputmode="numeric"
+  placeholder="e.g. 230"
+  autocomplete="off"
+  required
+>
 
       <label>Combat Power</label>
       <input
@@ -270,14 +269,26 @@ button:disabled {
       <div class="hint">
         Examples: 950K, 1.5M, 3.95G
       </div>
+<label>Second March Power</label>
+<input
+  name="second_march_power"
+  inputmode="text"
+  placeholder="e.g. 850K, 1.2M, 3.95G"
+  autocomplete="off"
+  required
+>
 
+<div class="hint">
+  Examples: 850K, 1.2M, 3.95G
+</div>
 
-      <label>Faction</label>
-      <input
-        name="faction"
-        placeholder="Enter faction"
-        required
-      >
+<label>Faction</label>
+<select name="faction" required>
+  <option value="">Select faction</option>
+  <option value="Shooter">Shooter</option>
+  <option value="Fighter">Fighter</option>
+  <option value="Rider">Rider</option>
+</select>
 
 
       <label>Number of Kills</label>
@@ -399,9 +410,6 @@ async function loadStats() {
       );
 
 
-    document.getElementById("players")
-      .textContent =
-      players.length.toLocaleString("en-US");
 
 
     document.getElementById("kills")
